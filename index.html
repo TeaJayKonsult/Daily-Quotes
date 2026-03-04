@@ -225,6 +225,18 @@
       box-shadow: 0 4px 16px rgba(37,211,102,0.3);
     }
 
+    .btn-facebook {
+      background: #1877f2;
+      color: white;
+      box-shadow: 0 4px 16px rgba(24,119,242,0.3);
+    }
+
+    .btn-twitter {
+      background: #000000;
+      color: white;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+
     .btn-copy {
       background: var(--white);
       color: var(--purple);
@@ -285,6 +297,16 @@
       z-index: 9999;
       animation: fadeIn 0.3s ease;
     }
+
+    .share-label {
+      font-size: 12px;
+      color: var(--gray);
+      text-align: center;
+      width: 100%;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
   </style>
 </head>
 <body>
@@ -328,9 +350,14 @@
 
     <div class="counter" id="quoteCounter"></div>
 
+    <button class="btn btn-primary" style="width:100%" onclick="newQuote()">✨ New Quote</button>
+
+    <div class="share-label">Share this quote</div>
+
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="newQuote()">✨ New Quote</button>
-      <button class="btn btn-whatsapp" onclick="shareWhatsApp()">📤 WhatsApp</button>
+      <button class="btn btn-whatsapp" onclick="shareWhatsApp()">💬 WhatsApp</button>
+      <button class="btn btn-facebook" onclick="shareFacebook()">📘 Facebook</button>
+      <button class="btn btn-twitter" onclick="shareTwitter()">🐦 X (Twitter)</button>
       <button class="btn btn-copy" onclick="copyQuote()">📋 Copy Quote</button>
     </div>
 
@@ -338,6 +365,8 @@
   </div>
 
 <script>
+  const APP_LINK = 'https://teajaykonsult-daily-quotes.vercel.app';
+
   const quotes = [
     { text: "The secret of getting ahead is getting started.", author: "Mark Twain", category: "motivation" },
     { text: "It always seems impossible until it's done.", author: "Nelson Mandela", category: "motivation" },
@@ -440,9 +469,13 @@
     document.getElementById('quoteCounter').textContent = `${shownQuotes.length} of ${pool.length} quotes`;
   }
 
+  function getShareText() {
+    return `💬 *"${currentQuote.text}"*\n\n— ${currentQuote.author}\n\n_Shared via Daily Quotes by TeaJay Konsult Ltd._\n🌐 Get the app: ${APP_LINK}`;
+  }
+
   function copyQuote() {
     if (!currentQuote) return;
-    const text = `"${currentQuote.text}" — ${currentQuote.author}\n\nShared via Daily Quotes by TeaJay Konsult Ltd.`;
+    const text = `"${currentQuote.text}" — ${currentQuote.author}\n\nShared via Daily Quotes by TeaJay Konsult Ltd.\n🌐 Get the app: ${APP_LINK}`;
     navigator.clipboard.writeText(text).then(() => {
       const toast = document.getElementById('copiedToast');
       toast.style.display = 'block';
@@ -452,8 +485,18 @@
 
   function shareWhatsApp() {
     if (!currentQuote) return;
-    const text = `💬 *"${currentQuote.text}"*\n\n— ${currentQuote.author}\n\n_Shared via Daily Quotes by TeaJay Konsult Ltd._`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/?text=${encodeURIComponent(getShareText())}`, '_blank');
+  }
+
+  function shareFacebook() {
+    if (!currentQuote) return;
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(APP_LINK)}&quote=${encodeURIComponent(`"${currentQuote.text}" — ${currentQuote.author}`)}`, '_blank');
+  }
+
+  function shareTwitter() {
+    if (!currentQuote) return;
+    const text = `💬 "${currentQuote.text}" — ${currentQuote.author}\n\nGet the app: ${APP_LINK}`;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
   }
 
   newQuote();
