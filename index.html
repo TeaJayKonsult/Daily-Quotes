@@ -43,30 +43,36 @@
       flex-direction: column;
     }
 
-    .install-banner {
-      display: none;
+    /* Permanent install button - small, centered at bottom */
+    .perm-install-btn {
       position: fixed;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
       background: var(--purple);
       color: white;
-      padding: 14px 24px;
-      border-radius: 50px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      z-index: 999;
-      box-shadow: 0 8px 24px rgba(108,52,131,0.4);
-      animation: bounce 1.5s infinite;
-      white-space: nowrap;
       border: none;
+      border-radius: 40px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: transform 0.1s, background 0.2s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .perm-install-btn:active {
+      transform: translateX(-50%) scale(0.96);
     }
 
     .ios-banner {
       display: none;
       position: fixed;
-      bottom: 20px;
+      bottom: 80px;
       left: 50%;
       transform: translateX(-50%);
       background: var(--white);
@@ -99,11 +105,6 @@
       color: var(--gray);
       font-size: 16px;
       cursor: pointer;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(-6px); }
     }
 
     @keyframes fadeIn {
@@ -147,7 +148,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       gap: 20px;
       padding-bottom: 100px;
     }
@@ -311,10 +311,6 @@
 </head>
 <body>
 
-  <button class="install-banner" id="installBtn" onclick="installApp()">
-    📲 Install Quote Generator
-  </button>
-
   <div class="ios-banner" id="iosBanner">
     <button class="ios-close" onclick="closeIosBanner()">✕</button>
     <strong>📲 Install on iPhone/iPad</strong>
@@ -332,7 +328,6 @@
   </header>
 
   <div class="container">
-
     <div class="category-row">
       <button class="cat-btn active" onclick="setCategory('all', this)">All</button>
       <button class="cat-btn" onclick="setCategory('motivation', this)">💪 Motivation</button>
@@ -364,40 +359,118 @@
     <div class="copyright">© 2026 TeaJay Konsult Ltd. All rights reserved.</div>
   </div>
 
+  <!-- Permanent install button (always visible) -->
+  <button class="perm-install-btn" id="installBtn">📲 Install App</button>
+
 <script>
   const APP_LINK = 'https://teajaykonsult-daily-quotes.vercel.app';
 
+  // 100 quotes across categories (motivation, success, life, wisdom)
   const quotes = [
+    // Motivation (25)
     { text: "The secret of getting ahead is getting started.", author: "Mark Twain", category: "motivation" },
     { text: "It always seems impossible until it's done.", author: "Nelson Mandela", category: "motivation" },
     { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson", category: "motivation" },
     { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt", category: "motivation" },
     { text: "Act as if what you do makes a difference. It does.", author: "William James", category: "motivation" },
+    { text: "Start where you are. Use what you have. Do what you can.", author: "Arthur Ashe", category: "motivation" },
+    { text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt", category: "motivation" },
+    { text: "What you get by achieving your goals is not as important as what you become.", author: "Zig Ziglar", category: "motivation" },
+    { text: "Dream it. Wish it. Do it.", author: "Unknown", category: "motivation" },
+    { text: "Stay positive, work hard, make it happen.", author: "Unknown", category: "motivation" },
+    { text: "Push yourself, because no one else is going to do it for you.", author: "Unknown", category: "motivation" },
+    { text: "Great things never come from comfort zones.", author: "Unknown", category: "motivation" },
+    { text: "The harder you work for something, the greater you'll feel when you achieve it.", author: "Unknown", category: "motivation" },
+    { text: "Don't stop when you're tired. Stop when you're done.", author: "Unknown", category: "motivation" },
+    { text: "Wake up with determination. Go to bed with satisfaction.", author: "Unknown", category: "motivation" },
+    { text: "Little things make big days.", author: "Unknown", category: "motivation" },
+    { text: "It's going to be hard, but hard is not impossible.", author: "Unknown", category: "motivation" },
+    { text: "You are your only limit.", author: "Unknown", category: "motivation" },
+    { text: "Make each day your masterpiece.", author: "John Wooden", category: "motivation" },
+    { text: "The future depends on what you do today.", author: "Mahatma Gandhi", category: "motivation" },
+    { text: "Every step forward, no matter how small, is progress worth celebrating.", author: "Pamilerin Adetunji Ajala", category: "motivation" },
+    { text: "Your dreams are valid, your efforts are enough, keep pushing.", author: "Pamilerin Adetunji Ajala", category: "motivation" },
+    { text: "One small positive thought can change your whole day.", author: "Unknown", category: "motivation" },
+    { text: "The only way to do great work is to love what you do.", author: "Steve Jobs", category: "motivation" },
+    { text: "Success is the sum of small efforts, repeated day in and day out.", author: "Robert Collier", category: "motivation" },
+    // Success (20)
     { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill", category: "success" },
     { text: "The road to success and the road to failure are almost exactly the same.", author: "Colin R. Davis", category: "success" },
     { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau", category: "success" },
     { text: "Don't be afraid to give up the good to go for the great.", author: "John D. Rockefeller", category: "success" },
     { text: "I find that the harder I work, the more luck I seem to have.", author: "Thomas Jefferson", category: "success" },
+    { text: "Success is walking from failure to failure with no loss of enthusiasm.", author: "Winston Churchill", category: "success" },
+    { text: "The only place where success comes before work is in the dictionary.", author: "Vidal Sassoon", category: "success" },
+    { text: "Success is not how high you have climbed, but how you make a positive difference to the world.", author: "Roy T. Bennett", category: "success" },
+    { text: "Build something today that your future self will be grateful for.", author: "Pamilerin Adetunji Ajala", category: "success" },
+    { text: "The man who works with purpose will never run out of reasons to wake up.", author: "Pamilerin Adetunji Ajala", category: "success" },
+    { text: "Success is the result of preparation, hard work, and learning from failure.", author: "Colin Powell", category: "success" },
+    { text: "Opportunities don't happen. You create them.", author: "Chris Grosser", category: "success" },
+    { text: "Try not to become a person of success, but rather a person of value.", author: "Albert Einstein", category: "success" },
+    { text: "The secret to success is to know something nobody else knows.", author: "Aristotle Onassis", category: "success" },
+    { text: "Success is not the key to happiness. Happiness is the key to success.", author: "Albert Schweitzer", category: "success" },
+    { text: "Strive not to be a success, but rather to be of value.", author: "Albert Einstein", category: "success" },
+    { text: "Success is no accident. It is hard work, perseverance, learning, sacrifice.", author: "Pelé", category: "success" },
+    { text: "Don't be afraid to fail. Be afraid not to try.", author: "Michael Jordan", category: "success" },
+    { text: "The difference between who you are and who you want to be is what you do.", author: "Unknown", category: "success" },
+    { text: "Success is liking yourself, liking what you do, and liking how you do it.", author: "Maya Angelou", category: "success" },
+    // Life (25)
     { text: "In the middle of every difficulty lies opportunity.", author: "Albert Einstein", category: "life" },
     { text: "Life is what happens when you're busy making other plans.", author: "John Lennon", category: "life" },
     { text: "The purpose of our lives is to be happy.", author: "Dalai Lama", category: "life" },
     { text: "You only live once, but if you do it right, once is enough.", author: "Mae West", category: "life" },
     { text: "Life is either a daring adventure or nothing at all.", author: "Helen Keller", category: "life" },
+    { text: "Life rewards consistency more than it rewards talent.", author: "Pamilerin Adetunji Ajala", category: "life" },
+    { text: "A gentle heart carries the strength of a thousand warriors.", author: "Foluke Grace Ajala", category: "life" },
+    { text: "Love is not just a feeling, it is a daily decision to show up.", author: "Foluke Grace Ajala", category: "life" },
+    { text: "The good life is a process, not a state of being.", author: "Carl Rogers", category: "life" },
+    { text: "Life is really simple, but we insist on making it complicated.", author: "Confucius", category: "life" },
+    { text: "In the end, it's not the years in your life that count. It's the life in your years.", author: "Abraham Lincoln", category: "life" },
+    { text: "Life is a journey, not a destination.", author: "Ralph Waldo Emerson", category: "life" },
+    { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", author: "Nelson Mandela", category: "life" },
+    { text: "Life is short, and it's up to you to make it sweet.", author: "Sarah Louise Delany", category: "life" },
+    { text: "Don't count the days, make the days count.", author: "Muhammad Ali", category: "life" },
+    { text: "Life is about making an impact, not making an income.", author: "Kevin Kruse", category: "life" },
+    { text: "To live is the rarest thing in the world. Most people exist, that is all.", author: "Oscar Wilde", category: "life" },
+    { text: "Life is like riding a bicycle. To keep your balance, you must keep moving.", author: "Albert Einstein", category: "life" },
+    { text: "Life isn't about finding yourself. Life is about creating yourself.", author: "George Bernard Shaw", category: "life" },
+    { text: "The purpose of life is a life of purpose.", author: "Robert Byrne", category: "life" },
+    { text: "Life is a long lesson in humility.", author: "James M. Barrie", category: "life" },
+    { text: "Wherever you go, go with all your heart.", author: "Confucius", category: "life" },
+    { text: "Life is not measured by the number of breaths we take, but by the moments that take our breath away.", author: "Maya Angelou", category: "life" },
+    { text: "Be happy for this moment. This moment is your life.", author: "Omar Khayyam", category: "life" },
+    { text: "Life is 10% what happens to us and 90% how we react to it.", author: "Charles R. Swindoll", category: "life" },
+    // Wisdom (30)
     { text: "The only true wisdom is in knowing you know nothing.", author: "Socrates", category: "wisdom" },
     { text: "The journey of a thousand miles begins with one step.", author: "Lao Tzu", category: "wisdom" },
     { text: "Yesterday I was clever, so I wanted to change the world. Today I am wise, so I am changing myself.", author: "Rumi", category: "wisdom" },
     { text: "He who knows others is wise; he who knows himself is enlightened.", author: "Lao Tzu", category: "wisdom" },
     { text: "Knowledge speaks, but wisdom listens.", author: "Jimi Hendrix", category: "wisdom" },
-    { text: "Every step forward, no matter how small, is progress worth celebrating.", author: "Pamilerin Adetunji Ajala", category: "motivation" },
-    { text: "Your dreams are valid, your efforts are enough, keep pushing.", author: "Pamilerin Adetunji Ajala", category: "motivation" },
-    { text: "Build something today that your future self will be grateful for.", author: "Pamilerin Adetunji Ajala", category: "success" },
-    { text: "The man who works with purpose will never run out of reasons to wake up.", author: "Pamilerin Adetunji Ajala", category: "success" },
-    { text: "Life rewards consistency more than it rewards talent.", author: "Pamilerin Adetunji Ajala", category: "life" },
     { text: "Do not rush the process, greatness takes time to blossom.", author: "Pamilerin Adetunji Ajala", category: "wisdom" },
-    { text: "A gentle heart carries the strength of a thousand warriors.", author: "Foluke Grace Ajala", category: "life" },
-    { text: "Love is not just a feeling, it is a daily decision to show up.", author: "Foluke Grace Ajala", category: "life" },
     { text: "A man of character plants trees under whose shade he will never sit.", author: "Oluranti Ajala", category: "wisdom" },
-    { text: "Teach your children the value of hard work and integrity, it is the greatest inheritance.", author: "Oluranti Ajala", category: "wisdom" }
+    { text: "Teach your children the value of hard work and integrity, it is the greatest inheritance.", author: "Oluranti Ajala", category: "wisdom" },
+    { text: "Wisdom is not a product of schooling but of the lifelong attempt to acquire it.", author: "Albert Einstein", category: "wisdom" },
+    { text: "The fool doth think he is wise, but the wise man knows himself to be a fool.", author: "William Shakespeare", category: "wisdom" },
+    { text: "Turn your wounds into wisdom.", author: "Oprah Winfrey", category: "wisdom" },
+    { text: "Knowing yourself is the beginning of all wisdom.", author: "Aristotle", category: "wisdom" },
+    { text: "The wise man does not lay up his own treasures. The more he gives to others, the more he has for his own.", author: "Lao Tzu", category: "wisdom" },
+    { text: "Patience is the companion of wisdom.", author: "Saint Augustine", category: "wisdom" },
+    { text: "Silence is the sleep that nourishes wisdom.", author: "Francis Bacon", category: "wisdom" },
+    { text: "The art of being wise is the art of knowing what to overlook.", author: "William James", category: "wisdom" },
+    { text: "Wisdom is the reward you get for a lifetime of listening when you'd have preferred to talk.", author: "Doug Larson", category: "wisdom" },
+    { text: "A wise man learns by the mistakes of others, a fool by his own.", author: "Latin Proverb", category: "wisdom" },
+    { text: "The wise man asks questions, the fool tells answers.", author: "Unknown", category: "wisdom" },
+    { text: "To know what you know and what you do not know, that is true knowledge.", author: "Confucius", category: "wisdom" },
+    { text: "Wisdom begins in wonder.", author: "Socrates", category: "wisdom" },
+    { text: "A wise man makes his own decisions, an ignorant man follows public opinion.", author: "Chinese Proverb", category: "wisdom" },
+    { text: "The invariable mark of wisdom is to see the miraculous in the common.", author: "Ralph Waldo Emerson", category: "wisdom" },
+    { text: "Wisdom is the principal thing; therefore get wisdom: and with all thy getting get understanding.", author: "Proverbs 4:7", category: "wisdom" },
+    { text: "The older you get, the more you realize that kindness is synonymous with happiness.", author: "Lionel Barrymore", category: "wisdom" },
+    { text: "Wisdom is the power to put our time and our knowledge to the proper use.", author: "Thomas J. Watson", category: "wisdom" },
+    { text: "It is better to be alone than in bad company.", author: "George Washington", category: "wisdom" },
+    { text: "A man who carries a cat by the tail learns something he can learn in no other way.", author: "Mark Twain", category: "wisdom" },
+    { text: "Never mistake knowledge for wisdom. One helps you make a living; the other helps you make a life.", author: "Sandra Carey", category: "wisdom" },
+    { text: "Wisdom is the quality that keeps you from getting into situations where you need it.", author: "Unknown", category: "wisdom" }
   ];
 
   let currentCategory = 'all';
@@ -420,21 +493,37 @@
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    document.getElementById('installBtn').style.display = 'block';
+    console.log('beforeinstallprompt fired');
   });
 
   window.addEventListener('appinstalled', () => {
-    document.getElementById('installBtn').style.display = 'none';
     deferredPrompt = null;
+    alert('App installed successfully!');
   });
 
   async function installApp() {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const result = await deferredPrompt.userChoice;
-    if (result.outcome === 'accepted') document.getElementById('installBtn').style.display = 'none';
-    deferredPrompt = null;
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('User accepted install');
+      }
+      deferredPrompt = null;
+    } else {
+      // Fallback manual instructions
+      let instructions = '';
+      if (/android/i.test(navigator.userAgent)) {
+        instructions = 'Tap the browser menu (⋮) and select "Install app" or "Add to Home Screen".';
+      } else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+        instructions = 'Tap the Share button (⬆️) then "Add to Home Screen".';
+      } else {
+        instructions = 'Use your browser\'s "Add to Home Screen" or "Install" option.';
+      }
+      alert(`📲 Install Daily Quotes:\n\n${instructions}\n\nIf you just opened the app, wait a few seconds and try again.`);
+    }
   }
+
+  document.getElementById('installBtn').addEventListener('click', installApp);
 
   function toggleTheme() {
     isDark = !isDark;
@@ -454,6 +543,7 @@
     let pool = currentCategory === 'all' ? quotes : quotes.filter(q => q.category === currentCategory);
     if (shownQuotes.length >= pool.length) shownQuotes = [];
     let available = pool.filter(q => !shownQuotes.includes(q));
+    if (available.length === 0) available = pool; // fallback
     const quote = available[Math.floor(Math.random() * available.length)];
     shownQuotes.push(quote);
     currentQuote = quote;
@@ -499,10 +589,13 @@
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
   }
 
+  // Initialize
   newQuote();
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('SW registered'))
+      .catch(err => console.log('SW error', err));
   }
 </script>
 
