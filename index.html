@@ -359,7 +359,7 @@
     <div class="copyright">© 2026 TeaJay Konsult Ltd. All rights reserved.</div>
   </div>
 
-  <!-- Permanent install button (always visible) -->
+  <!-- Permanent install button (initially visible, hidden after installation) -->
   <button class="perm-install-btn" id="installBtn">📲 Install App</button>
 
 <script>
@@ -490,15 +490,28 @@
     document.getElementById('iosBanner').style.display = 'none';
   }
 
+  // ==================== IMPROVED INSTALL BUTTON LOGIC ====================
+  const installBtn = document.getElementById('installBtn');
+
+  // If app is already installed (standalone mode), hide the install button permanently
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (installBtn) installBtn.style.display = 'none';
+  }
+
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
     console.log('beforeinstallprompt fired');
+    // Show the button only if not already installed
+    if (installBtn && !window.matchMedia('(display-mode: standalone)').matches) {
+      installBtn.style.display = 'flex';
+    }
   });
 
   window.addEventListener('appinstalled', () => {
+    console.log('App installed successfully');
     deferredPrompt = null;
-    alert('App installed successfully!');
+    if (installBtn) installBtn.style.display = 'none';
   });
 
   async function installApp() {
@@ -507,10 +520,10 @@
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
         console.log('User accepted install');
+        if (installBtn) installBtn.style.display = 'none';
       }
       deferredPrompt = null;
     } else {
-      // Fallback manual instructions
       let instructions = '';
       if (/android/i.test(navigator.userAgent)) {
         instructions = 'Tap the browser menu (⋮) and select "Install app" or "Add to Home Screen".';
@@ -522,8 +535,8 @@
       alert(`📲 Install Daily Quotes:\n\n${instructions}\n\nIf you just opened the app, wait a few seconds and try again.`);
     }
   }
-
-  document.getElementById('installBtn').addEventListener('click', installApp);
+  if (installBtn) installBtn.addEventListener('click', installApp);
+  // =======================================================================
 
   function toggleTheme() {
     isDark = !isDark;
@@ -543,7 +556,7 @@
     let pool = currentCategory === 'all' ? quotes : quotes.filter(q => q.category === currentCategory);
     if (shownQuotes.length >= pool.length) shownQuotes = [];
     let available = pool.filter(q => !shownQuotes.includes(q));
-    if (available.length === 0) available = pool; // fallback
+    if (available.length === 0) available = pool;
     const quote = available[Math.floor(Math.random() * available.length)];
     shownQuotes.push(quote);
     currentQuote = quote;
